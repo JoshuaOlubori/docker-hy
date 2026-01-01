@@ -18,6 +18,7 @@ A note-taking application specifically designed for people with dyslexia, featur
 - Auto-save timestamps
 - Organized note list with previews
 - Responsive design for mobile and desktop
+- **SQLite database** - No external database server required!
 
 ## Project Structure
 
@@ -26,7 +27,8 @@ dyslexia-notes/
 ├── backend/
 │   ├── main.py              # FastAPI application
 │   ├── requirements.txt     # Python dependencies
-│   └── .env                 # Environment variables
+│   ├── .env                 # Environment variables
+│   └── notes.db            # SQLite database (created automatically)
 ├── frontend/
 │   ├── src/
 │   │   ├── App.jsx         # Main React component
@@ -37,8 +39,6 @@ dyslexia-notes/
 │   ├── vite.config.js
 │   ├── tailwind.config.js
 │   └── postcss.config.js
-├── database/
-│   └── init.sql            # Database initialization
 └── README.md
 ```
 
@@ -47,7 +47,7 @@ dyslexia-notes/
 ### Prerequisites
 - Python 3.9+
 - Node.js 18+
-- PostgreSQL 14+
+- **No database installation needed!** (Uses SQLite)
 
 ### Backend Setup
 
@@ -67,30 +67,18 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. **Set up environment variables**
+4. **Set up environment variables (optional)**
 ```bash
 cp .env.example .env
-# Edit .env with your database credentials
+# SQLite will create notes.db automatically, no configuration needed!
 ```
 
-5. **Create PostgreSQL database**
-```bash
-psql -U postgres
-CREATE DATABASE notesdb;
-CREATE USER user WITH PASSWORD 'password';
-GRANT ALL PRIVILEGES ON DATABASE notesdb TO user;
-\q
-```
-
-6. **Initialize database schema**
-```bash
-psql -U user -d notesdb -f ../database/init.sql
-```
-
-7. **Run the backend**
+5. **Run the backend**
 ```bash
 python main.py
 ```
+
+The database file `notes.db` will be created automatically in the backend directory on first run!
 
 Backend will run on `http://localhost:8000`
 
@@ -158,42 +146,6 @@ POST /notes
 }
 ```
 
-## Docker Setup (For Future Implementation)
-
-The application is designed to be easily containerized. You can create Dockerfiles for both frontend and backend, and use docker-compose to orchestrate all services including PostgreSQL.
-
-### Recommended Docker Structure
-```yaml
-version: '3.8'
-services:
-  db:
-    image: postgres:14
-    environment:
-      POSTGRES_DB: notesdb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-  
-  backend:
-    build: ./backend
-    depends_on:
-      - db
-    environment:
-      DATABASE_URL: postgresql://user:password@db:5432/notesdb
-  
-  frontend:
-    build: ./frontend
-    depends_on:
-      - backend
-```
-
-## Environment Variables
-
-### Backend (.env)
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/notesdb
-API_HOST=0.0.0.0
-API_PORT=8000
-```
 
 ## Technology Stack
 
@@ -207,9 +159,35 @@ API_PORT=8000
 ### Backend
 - FastAPI
 - SQLAlchemy (ORM)
-- PostgreSQL
+- **SQLite** (embedded database)
 - Pydantic (validation)
 - Uvicorn (ASGI server)
+
+## Database Information
+
+### Why SQLite?
+- **Zero Configuration**: No separate database server to install or configure
+- **Portable**: Single file database that's easy to backup and move
+- **Perfect for Personal Use**: Ideal for single-user note-taking applications
+- **Easy Docker Deployment**: Just mount a volume to persist data
+- **Fast**: Great performance for this use case
+
+### Database File
+- Located at: `backend/notes.db`
+- Created automatically on first run
+- Can be backed up by simply copying the file
+- To reset: just delete `notes.db` and restart the backend
+
+### Migrating Data
+To backup your notes:
+```bash
+cp backend/notes.db backend/notes.db.backup
+```
+
+To restore:
+```bash
+cp backend/notes.db.backup backend/notes.db
+```
 
 ## Accessibility Design Principles
 
@@ -220,6 +198,21 @@ This app follows WCAG 2.1 guidelines and incorporates specific features for dysl
 3. **Color**: High contrast ratios and customizable overlays
 4. **Simplicity**: Clean interface without visual clutter
 5. **Consistency**: Predictable layout and navigation
+
+## Troubleshooting
+
+### Database Issues
+If you encounter database errors:
+```bash
+# Delete the database file and let it recreate
+rm backend/notes.db
+python backend/main.py
+```
+
+### Port Already in Use
+If port 8000 or 3000 is already in use, you can change them:
+- Backend: Edit `main.py` or set `API_PORT` in `.env`
+- Frontend: Edit `vite.config.js` port setting
 
 ## Contributing
 

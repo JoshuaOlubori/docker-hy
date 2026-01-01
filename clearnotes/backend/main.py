@@ -8,10 +8,14 @@ from datetime import datetime
 from typing import List
 import os
 
-# Database configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://user:password@localhost:5432/notesdb")
+# Database configuration - SQLite
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./notes.db")
 
-engine = create_engine(DATABASE_URL)
+# SQLite specific configuration
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}  # Needed for SQLite
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -53,7 +57,7 @@ app = FastAPI(title="Dyslexia-Friendly Notes API")
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173"],
+    allow_origins=["http://127.0.0.1:5000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -70,7 +74,7 @@ def get_db():
 # API Routes
 @app.get("/")
 def read_root():
-    return {"message": "Dyslexia-Friendly Notes API", "status": "running"}
+    return {"message": "Dyslexia-Friendly Notes API", "status": "running", "database": "SQLite"}
 
 @app.get("/notes", response_model=List[NoteResponse])
 def get_notes(db: Session = Depends(get_db)):

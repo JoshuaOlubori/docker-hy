@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Save, Trash2, Settings, X } from 'lucide-react';
 
 const API_URL = 'http://localhost:8000';
