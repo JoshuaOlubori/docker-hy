@@ -1,0 +1,4 @@
+services:
+  simple-web-service:
+    image: devopsdockeruh/simple-web-service:ubuntu
+    

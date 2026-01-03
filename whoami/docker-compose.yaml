@@ -1,0 +1,14 @@
+services:
+  whoami:
+    image: jwilder/whoami
+    ports:
+      - 8000:8000
+
+
+
+services:
+  backend:
+    image: thisandthis
+    environment:
+      - ENV=VALUE
+      - ENV=VALUE
