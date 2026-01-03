@@ -1,0 +1,31 @@
+services:
+  whoami:
+    image: jwilder/whoami
+    volumes:
+      - ./hello.html:/usr/share/nginx/html/index.html:ro
+    environment:
+      - VIRTUAL_HOST=whoami.colasloth.com
+
+
+  hello:
+    image: nginx:alpine
+    volumes:
+     - ./hello.html:/usr/share/nginx/html/index.html:ro
+    environment:
+      - VIRTUAL_HOST=hello.colasloth.com  # 👈 Traffic for this domain goes here
+
+# Service 3: Static "world" page  
+  world:
+    image: nginx:alpine
+    volumes:
+      - ./world.html:/usr/share/nginx/html/index.html:ro
+    environment:
+      - VIRTUAL_HOST=world.colasloth.com  # 👈 Traffic for this domain goes here
+
+   # The Load Balancer / Traffic Director
+  proxy:
+    image: jwilder/nginx-proxy
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro  # 👈 Watches Docker for changes
+    ports:
+      - "80:80"  # 👈 Only this container is exposed to the outside

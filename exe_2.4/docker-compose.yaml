@@ -9,6 +9,7 @@ services:
       - PORT=8080
       - REQUEST_ORIGIN=http://127.0.0.1:5000
       - REDIS_HOST=redis
+    restart: unless-stopped
 
 
   frontend:
