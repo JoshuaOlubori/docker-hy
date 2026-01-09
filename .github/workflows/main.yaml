@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'chapter_3/express-app/**
+      - 'chapter_3/express-app/**'
 
 jobs:
   build:
