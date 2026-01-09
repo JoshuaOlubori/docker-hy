@@ -7,5 +7,14 @@ export default defineConfig({
     port: 5000,
     host: true,
     allowedHosts: ['localhost', 'frontend']
-  }
+  },
+  watch: {
+      usePolling: true, // Essential for Docker/Codespaces to detect file changes
+    },
+      hmr: {
+      // This allows the HMR websocket to work through the Codespace proxy
+      clientPort: 443, 
+    },
 })
+
+
