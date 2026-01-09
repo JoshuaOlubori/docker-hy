@@ -10,6 +10,7 @@ import os
 
 # Database configuration - SQLite
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./notes.db")
+API_PORT = int(os.getenv("API_PORT"))
 
 # SQLite specific configuration
 engine = create_engine(
@@ -57,7 +58,7 @@ app = FastAPI(title="Dyslexia-Friendly Notes API")
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5000"],
+    allow_origins=["http://localhost", "http://127.0.0.1"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -125,4 +126,4 @@ def delete_note(note_id: int, db: Session = Depends(get_db)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=API_PORT)
