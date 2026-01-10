@@ -14,7 +14,7 @@ import os
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./notes.db")
 API_PORT = int(os.getenv("API_PORT",8000))
 
-# SQLite specific configuration
+# SQLite configuration
 engine = create_engine(
     DATABASE_URL,
     connect_args={"check_same_thread": False}  # Needed for SQLite
