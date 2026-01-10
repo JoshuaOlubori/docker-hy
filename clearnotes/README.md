@@ -5,6 +5,8 @@ A note-taking application specifically designed for people with dyslexia, featur
 
 [Link to deployed app](https://clearnotes.onrender.com/)
 
+- Uses Github Actions with a Render Deploy Hook for CI/CD. Action can be viewed [here](https://github.com/JoshuaOlubori/docker-hy/blob/main/.github/workflows/clearnotes.yaml)
+
 ## Features
 
 ### Accessibility Features
