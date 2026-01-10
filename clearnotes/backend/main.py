@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from sqlalchemy import create_engine, Column, Integer, String, Text, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from pydantic import BaseModel
 from datetime import datetime
@@ -58,7 +60,7 @@ app = FastAPI(title="Dyslexia-Friendly Notes API")
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost", "http://127.0.0.1"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -73,9 +75,7 @@ def get_db():
         db.close()
 
 # API Routes
-@app.get("/")
-def read_root():
-    return {"message": "Dyslexia-Friendly Notes API", "status": "running", "database": "SQLite"}
+
 
 @app.get("/notes", response_model=List[NoteResponse])
 def get_notes(db: Session = Depends(get_db)):
@@ -123,6 +123,16 @@ def delete_note(note_id: int, db: Session = Depends(get_db)):
     db.query(Note).filter(Note.id == note_id).delete()
     db.commit()
     return None
+
+@app.get("/health")
+def health_check():
+    return {"message": "Dyslexia-Friendly Notes API", "status": "running", "database": "SQLite"}
+
+app.mount("/", StaticFiles(directory="static_dist", html=True), name="static")
+
+@app.exception_handler(404)
+async def not_found_handler(request, exc):
+    return FileResponse("static_dist/index.html")
 
 if __name__ == "__main__":
     import uvicorn
