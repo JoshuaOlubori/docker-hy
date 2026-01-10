@@ -12,7 +12,7 @@ import os
 
 # Database configuration - SQLite
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./notes.db")
-API_PORT = int(os.getenv("API_PORT"))
+API_PORT = int(os.getenv("API_PORT",8000))
 
 # SQLite specific configuration
 engine = create_engine(
